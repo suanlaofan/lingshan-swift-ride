@@ -1,0 +1,19 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+.utmp/
+/Artifacts/
+
+# Licensed third-party packages are intentionally not redistributed.
+/Assets/Allsky/
+/Assets/PolygonNatureBiomes/
+/Packages/com.bytedance.pico.xr/
+
+.DS_Store
+*.csproj
+*.sln
+*.user
