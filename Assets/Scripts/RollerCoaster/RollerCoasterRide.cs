@@ -27,6 +27,10 @@ public sealed class RollerCoasterRide : MonoBehaviour
     private bool running;
     private bool finished;
     private bool heldForStartMenu;
+    private bool paused;
+    private bool hasStarted;
+    private bool applicationFocused = true;
+    private bool applicationPaused;
 
     public float NormalizedProgress => path == null || path.Length <= 0f ? 0f : distance / path.Length;
     public float CurrentDistance => distance;
@@ -35,9 +39,18 @@ public sealed class RollerCoasterRide : MonoBehaviour
     public bool IsRunning => running;
     public bool IsFinished => finished;
     public bool IsHeldForStartMenu => heldForStartMenu;
+    public bool IsPaused => paused;
+    public float RouteLength => path == null ? 0f : path.Length;
     public Transform VehicleRoot => vehicleRoot;
 
+    public void EvaluateRouteDistance(float routeDistance, out Vector3 position, out Vector3 tangent, out Vector3 up)
+    {
+        path.EvaluateDistance(routeDistance, out position, out tangent, out up);
+    }
+
     public event System.Action<RollerCoasterRide> FinishedAtEnd;
+    public event System.Action<RollerCoasterRide> RunStarted;
+    public event System.Action<RollerCoasterRide> PauseChanged;
 
     public void Configure(RollerCoasterPath newPath, Transform newVehicleRoot)
     {
@@ -53,13 +66,17 @@ public sealed class RollerCoasterRide : MonoBehaviour
 
     private void Update()
     {
+        if (!applicationFocused || applicationPaused)
+        {
+            return;
+        }
         HandleKeyboard();
         if (path == null || vehicleRoot == null || path.Length <= 0.01f)
         {
             return;
         }
 
-        if (heldForStartMenu)
+        if (heldForStartMenu || paused)
         {
             return;
         }
@@ -69,7 +86,7 @@ public sealed class RollerCoasterRide : MonoBehaviour
             countdown -= Time.deltaTime;
             if (countdown <= 0f)
             {
-                running = true;
+                BeginRun();
             }
         }
 
@@ -91,12 +108,14 @@ public sealed class RollerCoasterRide : MonoBehaviour
                 if (stopAtEnd)
                 {
                     finished = true;
+                    paused = false;
                     FinishedAtEnd?.Invoke(this);
                 }
                 else
                 {
                     distance = 0f;
                     countdown = startDelay;
+                    hasStarted = false;
                 }
             }
 
@@ -116,6 +135,8 @@ public sealed class RollerCoasterRide : MonoBehaviour
         countdown = startDelay;
         running = false;
         finished = false;
+        paused = false;
+        hasStarted = false;
 
         if (path != null && vehicleRoot != null && path.Length > 0.01f)
         {
@@ -147,7 +168,7 @@ public sealed class RollerCoasterRide : MonoBehaviour
         heldForStartMenu = false;
         autoStart = false;
         countdown = 0f;
-        running = true;
+        BeginRun();
     }
 
     public void HoldAtFinishedEnd()
@@ -158,6 +179,7 @@ public sealed class RollerCoasterRide : MonoBehaviour
         speed = 0f;
         running = false;
         finished = true;
+        paused = false;
     }
 
     public void TogglePause()
@@ -167,12 +189,60 @@ public sealed class RollerCoasterRide : MonoBehaviour
             return;
         }
 
-        if (finished)
+        if (finished || !hasStarted)
         {
             ResetRide();
+            autoStart = false;
+            BeginRun();
+            return;
         }
-        running = !running;
+        SetPaused(!paused);
+    }
+
+    public void SetPaused(bool shouldPause)
+    {
+        if (heldForStartMenu || finished || !hasStarted || paused == shouldPause)
+        {
+            return;
+        }
+        if (!shouldPause && (!applicationFocused || applicationPaused))
+        {
+            return;
+        }
+
+        paused = shouldPause;
+        running = !shouldPause;
         autoStart = false;
+        PauseChanged?.Invoke(this);
+    }
+
+    private void BeginRun()
+    {
+        paused = false;
+        running = true;
+        if (!hasStarted)
+        {
+            hasStarted = true;
+            RunStarted?.Invoke(this);
+        }
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        applicationFocused = hasFocus;
+        if (!hasFocus)
+        {
+            SetPaused(true);
+        }
+    }
+
+    private void OnApplicationPause(bool isApplicationPaused)
+    {
+        applicationPaused = isApplicationPaused;
+        if (isApplicationPaused)
+        {
+            SetPaused(true);
+        }
     }
 
     private void HandleKeyboard()

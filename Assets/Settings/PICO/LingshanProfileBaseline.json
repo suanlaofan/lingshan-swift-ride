@@ -1,0 +1,216 @@
+{
+    "pipeline": "Assets/Settings/PC_RPAsset.asset",
+    "capturedUtc": "2026-09-07T06:48:40.2332520Z",
+    "pointLights": [
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1209611048-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-421106847-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (19)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1181583654-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (20)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-128532203-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (21)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1819566752-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (22)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-828235471-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (23)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1259422367-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (24)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-521049871-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (25)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1921379895-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (26)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-728378260-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (27)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1970723132-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (30)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-347621205-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (31)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1308049620-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (34)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-657123673-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (35)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-589414754-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (36)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1014201304-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (37)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1680626418-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (38)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-123362738-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (39)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1869732834-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (32)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1142141096-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (33)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1397570609-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (17)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1940192751-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (28)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-120408428-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (29)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1615720309-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (18)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-958710167-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (16)",
+            "shadows": 0
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-632414486-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-866308070-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (4)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1962518527-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (5)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-518490390-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (6)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1428710828-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (12)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-441166589-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (1)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1260001979-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (15)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1318964503-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (40)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-306121069-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (2)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-2010614400-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (7)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-380317949-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (10)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-202415517-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (11)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-843774208-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (8)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1433836922-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (9)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1762555378-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (13)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-1411206956-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (14)",
+            "shadows": 2
+        },
+        {
+            "objectId": "GlobalObjectId_V1-2-d2f9c1ef2f7aa47d29c972472857622b-989574163-0",
+            "hierarchy": "Environment/Wilderness Terrain/Point Light (3)",
+            "shadows": 2
+        }
+    ]
+}

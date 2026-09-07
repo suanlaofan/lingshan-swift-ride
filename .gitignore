@@ -17,3 +17,6 @@
 *.csproj
 *.sln
 *.user
+
+# Local visual acceptance captures; selected evidence accompanies releases.
+/Captures/

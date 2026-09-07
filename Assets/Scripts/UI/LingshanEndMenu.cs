@@ -16,6 +16,7 @@ public sealed class LingshanEndMenu : MonoBehaviour, ILingshanMenuOptionOwner
     private RollerCoasterRide ride;
     private RollerCoasterLookController lookController;
     private CanvasGroup rootGroup;
+    private LingshanMenuBackdrop menuBackdrop;
     private CanvasGroup contentGroup;
     private CanvasGroup blackFadeGroup;
     private RectTransform contentRect;
@@ -186,6 +187,7 @@ public sealed class LingshanEndMenu : MonoBehaviour, ILingshanMenuOptionOwner
         CreateShade(canvasObject.transform);
         CreateContent(canvasObject.transform, titleFont, menuFont);
         CreateBlackFade(canvasObject.transform);
+        menuBackdrop = LingshanMenuBackdrop.Show(menuCanvas);
 
         Navigation againNavigation = againOption.Button.navigation;
         againNavigation.mode = Navigation.Mode.Explicit;
@@ -297,17 +299,19 @@ public sealed class LingshanEndMenu : MonoBehaviour, ILingshanMenuOptionOwner
         CreateText(
             "Tagline",
             contentObject.transform,
-            "C O N Q U E R   T H E   H E I G H T S",
+            "JOURNEY COMPLETE",
             menuFont,
-            17,
+            24,
             new Vector2(4f, -272f),
             new Vector2(720f, 42f),
             new Color(0.73f, 0.75f, 0.77f, 0.92f),
             false);
 
+        CreateChallengeResults(contentObject.transform, menuFont);
+
         GameObject spineObject = CreateObject("Menu Spine", contentObject.transform);
         RectTransform spineRect = spineObject.GetComponent<RectTransform>();
-        SetTopLeft(spineRect, new Vector2(4f, -365f), new Vector2(1.5f, 166f));
+        SetTopLeft(spineRect, new Vector2(4f, -473f), new Vector2(1.5f, 166f));
         Image spine = spineObject.AddComponent<Image>();
         spine.color = FineLine;
         spine.raycastTarget = false;
@@ -316,23 +320,46 @@ public sealed class LingshanEndMenu : MonoBehaviour, ILingshanMenuOptionOwner
             contentObject.transform,
             "Again",
             "A G A I N",
-            -360f,
+            -468f,
             menuFont,
             PlayAgain);
         exitOption = CreateOption(
             contentObject.transform,
             "Exit",
             "E X I T",
-            -448f,
+            -556f,
             menuFont,
             ExitGame);
 
         GameObject ruleObject = CreateObject("Lower Rule", contentObject.transform);
         RectTransform ruleRect = ruleObject.GetComponent<RectTransform>();
-        SetTopLeft(ruleRect, new Vector2(4f, -536f), new Vector2(560f, 1f));
+        SetTopLeft(ruleRect, new Vector2(4f, -644f), new Vector2(560f, 1f));
         Image rule = ruleObject.AddComponent<Image>();
         rule.color = FineLine;
         rule.raycastTarget = false;
+    }
+
+    private static void CreateChallengeResults(Transform parent, Font menuFont)
+    {
+        LingshanCollectChallenge challenge = LingshanCollectChallenge.Instance;
+        int targetCount = challenge != null ? challenge.TargetCount : 12;
+        int score = challenge != null ? challenge.Score : 0;
+        int collected = challenge != null ? challenge.CollectedCount : 0;
+        // The end page and challenge can receive FinishedAtEnd in either order.
+        // Include this completed run even if persistence happens later that frame.
+        int bestScore = challenge != null ? Mathf.Max(score, challenge.BestScore) : 0;
+
+        CreateText(
+            "Run Score", parent, $"SCORE  {score} / {targetCount * 100}", menuFont, 32,
+            new Vector2(4f, -328f), new Vector2(720f, 44f), Color.white, false);
+        CreateText(
+            "Collected Charms", parent, $"CHARMS  {collected} / {targetCount}", menuFont, 24,
+            new Vector2(4f, -377f), new Vector2(720f, 34f),
+            new Color(0.87f, 0.88f, 0.89f, 1f), false);
+        CreateText(
+            "Best Score", parent, $"PERSONAL BEST  {bestScore}", menuFont, 24,
+            new Vector2(4f, -414f), new Vector2(720f, 34f),
+            new Color(0.87f, 0.88f, 0.89f, 1f), false);
     }
 
     private LingshanMenuOption CreateOption(
@@ -483,35 +510,10 @@ public sealed class LingshanEndMenu : MonoBehaviour, ILingshanMenuOptionOwner
 
     private void PlayAgain()
     {
-        if (!transitioning)
-        {
-            StartCoroutine(PlayAgainRoutine());
-        }
-    }
-
-    private IEnumerator PlayAgainRoutine()
-    {
+        if (transitioning) return;
         transitioning = true;
-        rootGroup.interactable = false;
-        eventSystem.SetSelectedGameObject(againOption.gameObject);
-
-        const float duration = 0.68f;
-        float elapsed = 0f;
-        Vector2 startPosition = contentRect.anchoredPosition;
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            float eased = t * t;
-            contentGroup.alpha = 1f - t;
-            contentRect.anchoredPosition = Vector2.Lerp(
-                startPosition,
-                startPosition + new Vector2(-82f, 0f),
-                eased);
-            rootGroup.alpha = 1f - Mathf.Clamp01((t - 0.2f) / 0.8f);
-            yield return null;
-        }
-
+        StopAllCoroutines();
+        menuBackdrop?.Restore();
         ride.StartRideFromMenu();
         Debug.Log("Lingshan end menu: AGAIN confirmed.", this);
         if (lookController != null)
@@ -599,7 +601,8 @@ public sealed class LingshanEndMenu : MonoBehaviour, ILingshanMenuOptionOwner
         text.color = color;
         text.supportRichText = richText;
         text.horizontalOverflow = HorizontalWrapMode.Overflow;
-        text.verticalOverflow = VerticalWrapMode.Truncate;
+        text.verticalOverflow = name.StartsWith("Title Line")
+            ? VerticalWrapMode.Overflow : VerticalWrapMode.Truncate;
         text.raycastTarget = false;
         return text;
     }

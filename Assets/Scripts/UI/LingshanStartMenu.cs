@@ -16,6 +16,7 @@ public sealed class LingshanStartMenu : MonoBehaviour, ILingshanMenuOptionOwner
     private RollerCoasterRide ride;
     private RollerCoasterLookController lookController;
     private CanvasGroup rootGroup;
+    private LingshanMenuBackdrop menuBackdrop;
     private CanvasGroup contentGroup;
     private CanvasGroup blackFadeGroup;
     private RectTransform contentRect;
@@ -160,6 +161,7 @@ public sealed class LingshanStartMenu : MonoBehaviour, ILingshanMenuOptionOwner
         CreateShade(canvasObject.transform);
         CreateContent(canvasObject.transform, titleFont, menuFont);
         CreateBlackFade(canvasObject.transform);
+        menuBackdrop = LingshanMenuBackdrop.Show(canvas);
 
         Navigation startNavigation = startOption.Button.navigation;
         startNavigation.mode = Navigation.Mode.Explicit;
@@ -246,17 +248,30 @@ public sealed class LingshanStartMenu : MonoBehaviour, ILingshanMenuOptionOwner
         CreateText(
             "Tagline",
             contentObject.transform,
-            "C O N Q U E R   T H E   H E I G H T S",
+            "12 CHARMS. ONE JOURNEY.",
             menuFont,
-            17,
+            24,
             new Vector2(4f, -272f),
             new Vector2(720f, 42f),
             new Color(0.73f, 0.75f, 0.77f, 0.92f),
             false);
 
+        Text instructions = CreateText(
+            "Challenge Instructions",
+            contentObject.transform,
+            "Aim your controller at a gold charm.\nWhen it turns green, pull TRIGGER.",
+            menuFont,
+            22,
+            new Vector2(4f, -320f),
+            new Vector2(720f, 64f),
+            new Color(0.87f, 0.88f, 0.89f, 1f),
+            false);
+        instructions.alignment = TextAnchor.UpperLeft;
+        instructions.horizontalOverflow = HorizontalWrapMode.Wrap;
+
         GameObject spineObject = CreateObject("Menu Spine", contentObject.transform);
         RectTransform spineRect = spineObject.GetComponent<RectTransform>();
-        SetTopLeft(spineRect, new Vector2(4f, -365f), new Vector2(1.5f, 166f));
+        SetTopLeft(spineRect, new Vector2(4f, -421f), new Vector2(1.5f, 166f));
         Image spine = spineObject.AddComponent<Image>();
         spine.color = FineLine;
         spine.raycastTarget = false;
@@ -265,20 +280,20 @@ public sealed class LingshanStartMenu : MonoBehaviour, ILingshanMenuOptionOwner
             contentObject.transform,
             "Start",
             "S T A R T",
-            -360f,
+            -416f,
             menuFont,
             BeginGame);
         exitOption = CreateOption(
             contentObject.transform,
             "Exit",
             "E X I T",
-            -448f,
+            -504f,
             menuFont,
             ExitGame);
 
         GameObject ruleObject = CreateObject("Lower Rule", contentObject.transform);
         RectTransform ruleRect = ruleObject.GetComponent<RectTransform>();
-        SetTopLeft(ruleRect, new Vector2(4f, -536f), new Vector2(560f, 1f));
+        SetTopLeft(ruleRect, new Vector2(4f, -592f), new Vector2(560f, 1f));
         Image rule = ruleObject.AddComponent<Image>();
         rule.color = FineLine;
         rule.raycastTarget = false;
@@ -423,43 +438,18 @@ public sealed class LingshanStartMenu : MonoBehaviour, ILingshanMenuOptionOwner
 
     private void BeginGame()
     {
-        if (!transitioning)
-        {
-            StartCoroutine(BeginGameRoutine());
-        }
-    }
-
-    private IEnumerator BeginGameRoutine()
-    {
+        if (transitioning) return;
         transitioning = true;
         rootGroup.interactable = false;
-        eventSystem.SetSelectedGameObject(startOption.gameObject);
-
-        const float duration = 0.68f;
-        float elapsed = 0f;
-        Vector2 startPosition = contentRect.anchoredPosition;
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            float eased = t * t;
-            contentGroup.alpha = 1f - t;
-            contentRect.anchoredPosition = Vector2.Lerp(
-                startPosition,
-                startPosition + new Vector2(-82f, 0f),
-                eased);
-            rootGroup.alpha = 1f - Mathf.Clamp01((t - 0.2f) / 0.8f);
-            yield return null;
-        }
-
-        ride.StartRideFromMenu();
-        Debug.Log("Lingshan start menu: START confirmed.", this);
-        if (lookController != null)
-        {
-            lookController.enabled = true;
-        }
-
+        rootGroup.blocksRaycasts = false;
+        rootGroup.alpha = 0f;
+        // One Start action starts movement immediately, without another prompt or fade delay.
+        StopAllCoroutines();
         LingshanEndMenu.WatchForFinish(ride);
+        if (lookController != null) lookController.enabled = true;
+        menuBackdrop?.Restore();
+        ride.StartRideFromMenu();
+        Debug.Log("LINGSHAN_START_IMMEDIATE running=" + ride.IsRunning, this);
         Destroy(gameObject);
     }
 
@@ -526,7 +516,9 @@ public sealed class LingshanStartMenu : MonoBehaviour, ILingshanMenuOptionOwner
         text.color = color;
         text.supportRichText = richText;
         text.horizontalOverflow = HorizontalWrapMode.Overflow;
-        text.verticalOverflow = VerticalWrapMode.Truncate;
+        // The display font's line metrics exceed the visible capital height.
+        text.verticalOverflow = name.StartsWith("Title Line")
+            ? VerticalWrapMode.Overflow : VerticalWrapMode.Truncate;
         text.raycastTarget = false;
         return text;
     }

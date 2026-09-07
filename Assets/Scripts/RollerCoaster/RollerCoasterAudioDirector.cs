@@ -54,7 +54,13 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
     private AudioSource windSource;
     private AudioSource mechanicalOneShotSource;
     private AudioSource ritualOneShotSource;
+    private AudioSource[] pooledSources;
+    private RollerCoasterRide subscribedRide;
     private bool sourcesReady;
+    private bool audioPaused;
+    private bool applicationFocused = true;
+    private bool applicationPaused;
+    private float cueTime;
     private bool wasRunning;
     private bool wasFinished;
     private bool launchCuePlayed;
@@ -88,15 +94,22 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
 
     public void Configure(RollerCoasterRide newRide, Transform newVehicleRoot)
     {
+        UnsubscribeFromRide();
         ride = newRide;
         vehicleRoot = newVehicleRoot;
         LoadBundledClips();
 
-        if (Application.isPlaying && sourcesReady)
+        if (Application.isPlaying && isActiveAndEnabled)
+        {
+            SubscribeToRide();
+        }
+
+        if (Application.isPlaying && sourcesReady && isActiveAndEnabled)
         {
             AssignLoopClips();
-            StartContinuousLayers();
             ResetCueState();
+            UpdateAudioPause();
+            StartContinuousLayers();
         }
     }
 
@@ -121,6 +134,9 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
 
     private void OnEnable()
     {
+        ResolveReferences();
+        SubscribeToRide();
+        UpdateAudioPause();
         if (sourcesReady)
         {
             StartContinuousLayers();
@@ -132,18 +148,24 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
         if (ride == null)
         {
             ResolveReferences();
+            SubscribeToRide();
             if (ride == null)
             {
                 return;
             }
         }
 
+        UpdateAudioPause();
+        if (audioPaused)
+        {
+            return;
+        }
+
+        cueTime += Time.deltaTime;
         float progress = ride.NormalizedProgress;
         if (progress < previousProgress)
         {
-            ResetCueState();
-            wasRunning = false;
-            wasFinished = false;
+            ResetForNewRun();
         }
 
         UpdateContinuousMix(Time.deltaTime);
@@ -159,6 +181,7 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
 
     private void OnDisable()
     {
+        UnsubscribeFromRide();
         StopAllCoroutines();
         StopSource(musicSource);
         StopSource(railSource);
@@ -166,6 +189,108 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
         StopSource(windSource);
         StopSource(mechanicalOneShotSource);
         StopSource(ritualOneShotSource);
+        audioPaused = false;
+    }
+
+    private void SubscribeToRide()
+    {
+        if (subscribedRide == ride)
+        {
+            return;
+        }
+
+        UnsubscribeFromRide();
+        subscribedRide = ride;
+        if (subscribedRide != null)
+        {
+            subscribedRide.RunStarted += HandleRunStarted;
+            subscribedRide.PauseChanged += HandlePauseChanged;
+        }
+    }
+
+    private void UnsubscribeFromRide()
+    {
+        if (subscribedRide != null)
+        {
+            subscribedRide.RunStarted -= HandleRunStarted;
+            subscribedRide.PauseChanged -= HandlePauseChanged;
+        }
+        subscribedRide = null;
+    }
+
+    private void HandleRunStarted(RollerCoasterRide startedRide)
+    {
+        if (startedRide != ride)
+        {
+            return;
+        }
+
+        ResetForNewRun();
+        UpdateAudioPause();
+    }
+
+    private void ResetForNewRun()
+    {
+        StopSource(mechanicalOneShotSource);
+        StopSource(ritualOneShotSource);
+        cueTime = 0f;
+        ResetCueState();
+        // A new run owns a fresh launch cue; resuming only changes pause state.
+        wasRunning = false;
+        wasFinished = false;
+    }
+
+    private void HandlePauseChanged(RollerCoasterRide changedRide)
+    {
+        if (changedRide == ride)
+        {
+            UpdateAudioPause();
+        }
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        applicationFocused = hasFocus;
+        UpdateAudioPause();
+    }
+
+    private void OnApplicationPause(bool isApplicationPaused)
+    {
+        applicationPaused = isApplicationPaused;
+        UpdateAudioPause();
+    }
+
+    private void UpdateAudioPause()
+    {
+        bool shouldPause = !applicationFocused || applicationPaused || (ride != null && ride.IsPaused);
+        if (!isActiveAndEnabled || !sourcesReady || audioPaused == shouldPause)
+        {
+            return;
+        }
+
+        audioPaused = shouldPause;
+        foreach (AudioSource source in pooledSources)
+        {
+            if (source == null)
+            {
+                continue;
+            }
+            if (audioPaused)
+            {
+                source.Pause();
+            }
+            else
+            {
+                source.UnPause();
+            }
+        }
+
+        if (!audioPaused)
+        {
+            // UnPause preserves active playback; this also restores loops if
+            // the director was disabled and re-enabled while the ride paused.
+            StartContinuousLayers();
+        }
     }
 
     private void ResolveReferences()
@@ -238,6 +363,11 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
         ritualOneShotSource = CreateSource(15);
         mechanicalOneShotSource.volume = 1f;
         ritualOneShotSource.volume = 1f;
+        pooledSources = new[]
+        {
+            musicSource, railSource, chassisSource, windSource,
+            mechanicalOneShotSource, ritualOneShotSource
+        };
         sourcesReady = true;
     }
 
@@ -274,6 +404,11 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
 
     private void StartContinuousLayers()
     {
+        if (audioPaused)
+        {
+            return;
+        }
+
         StartLoop(musicSource);
         StartLoop(railSource);
         StartLoop(chassisSource);
@@ -392,7 +527,7 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
             return;
         }
 
-        float now = Time.time;
+        float now = cueTime;
         float speed = ride.CurrentSpeed;
         float slope = ride.CurrentSlope;
         bool liftHill = slope > 0.045f && speed < 11.5f;
@@ -476,6 +611,11 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
     {
         for (int index = 0; index < hitCount; index++)
         {
+            while (audioPaused)
+            {
+                yield return null;
+            }
+
             float accent = index == hitCount - 1 ? 1.12f : 1f;
             PlayRandom(
                 ritualOneShotSource,
@@ -486,7 +626,15 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
 
             if (index < hitCount - 1)
             {
-                yield return new WaitForSeconds(index == hitCount - 2 ? 0.46f : 0.31f);
+                float remaining = index == hitCount - 2 ? 0.46f : 0.31f;
+                while (remaining > 0f)
+                {
+                    yield return null;
+                    if (!audioPaused)
+                    {
+                        remaining -= Time.deltaTime;
+                    }
+                }
             }
         }
     }
@@ -508,11 +656,11 @@ public sealed class RollerCoasterAudioDirector : MonoBehaviour
 
         float currentDistance = ride == null ? 0f : ride.CurrentDistance;
         nextTrackJointDistance = currentDistance + Random.Range(3.5f, 5.5f);
-        nextRatchetTime = Time.time + 0.1f;
-        nextChainTime = Time.time + 0.45f;
-        nextCreakTime = Time.time + Random.Range(3f, 5f);
-        nextSummitCueTime = Time.time + 2f;
-        nextTurnCueTime = Time.time + 2f;
+        nextRatchetTime = cueTime + 0.1f;
+        nextChainTime = cueTime + 0.45f;
+        nextCreakTime = cueTime + Random.Range(3f, 5f);
+        nextSummitCueTime = cueTime + 2f;
+        nextTurnCueTime = cueTime + 2f;
         previousVehicleForward = vehicleRoot == null ? Vector3.forward : vehicleRoot.forward;
     }
 
