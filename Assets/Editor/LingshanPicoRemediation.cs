@@ -87,7 +87,7 @@ public static class LingshanPicoRemediation
             }
             BindAndroidQuality(QualityName, profile);
             GraphicsSettings.defaultRenderPipeline = profile;
-            PlayerSettings.productName = "灵山飞驰";
+            PlayerSettings.productName = "Lingshan Swift Ride";
             if (!Version.TryParse(PlayerSettings.bundleVersion, out Version existing) || existing < new Version(0, 2, 0))
                 PlayerSettings.bundleVersion = "0.2.0";
             PlayerSettings.Android.bundleVersionCode = Math.Max(2, PlayerSettings.Android.bundleVersionCode);
@@ -219,7 +219,7 @@ public static class LingshanPicoRemediation
             throw new InvalidOperationException("Switch the active Unity build target to Android before building.");
         if (PlayerSettings.GetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android) != PackageName)
             throw new InvalidOperationException("Android application identifier changed; preserving install identity is required.");
-        if (PlayerSettings.productName != "灵山飞驰" || PlayerSettings.Android.bundleVersionCode < 2
+        if (PlayerSettings.productName != "Lingshan Swift Ride" || PlayerSettings.Android.bundleVersionCode < 2
             || !Version.TryParse(PlayerSettings.bundleVersion, out Version version) || version < new Version(0, 2, 0))
             throw new InvalidOperationException("Apply the PICO product name and version profile before building.");
         UniversalRenderPipelineAsset pipeline = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(ProfilePath);

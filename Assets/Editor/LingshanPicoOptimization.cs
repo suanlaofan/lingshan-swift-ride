@@ -108,7 +108,7 @@ public static class LingshanPicoOptimization
         foreach (string flag in new[] { "m_ReflectionProbeBlending", "m_ReflectionProbeBoxProjection", "m_ReflectionProbeAtlas" })
         { var field = settings.FindProperty(flag); if (field != null) field.boolValue = false; }
         settings.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(pipeline);
-        PlayerSettings.bundleVersion = "0.2.1"; PlayerSettings.Android.bundleVersionCode = Math.Max(3, PlayerSettings.Android.bundleVersionCode);
+        PlayerSettings.bundleVersion = "0.2.2"; PlayerSettings.Android.bundleVersionCode = Math.Max(4, PlayerSettings.Android.bundleVersionCode);
         PlayerSettings.enableFrameTimingStats = true;
         ApplyIcons();
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
