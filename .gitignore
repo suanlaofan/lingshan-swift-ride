@@ -9,9 +9,6 @@
 /Artifacts/
 
 # Licensed third-party packages are intentionally not redistributed.
-/Assets/Allsky/
-/Assets/PolygonNatureBiomes/
-/Packages/com.bytedance.pico.xr/
 
 .DS_Store
 *.csproj
